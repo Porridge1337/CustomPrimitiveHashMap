@@ -94,11 +94,6 @@ public class CustomHashMap<K, V> implements CustomMap {
     }
 
     @Override
-    public Object[] getSortedArray() {
-        return new Object[0];
-    }
-
-    @Override
     public Set<K> keySet() {
         Set<K> keys = new TreeSet<>();
         for (int i = 0; i < hashTable.length; i++) {

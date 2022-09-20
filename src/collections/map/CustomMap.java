@@ -17,5 +17,4 @@ public interface CustomMap<K, V> {
 
     int size();
 
-    K[] getSortedArray();
 }
