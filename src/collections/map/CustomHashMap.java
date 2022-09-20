@@ -38,6 +38,59 @@ public class CustomHashMap<K, V> implements CustomMap {
         return false;
     }
 
+
+    @Override
+    public boolean remove(final Object key) {
+        int index = hash((K) key);
+        if (hashTable[index] == null) return false;
+        if (hashTable[index].getNodes().size() == 1) {
+            size--;
+            hashTable[index] = null;
+            return true;
+        }
+        List<Node<K, V>> nodeList = hashTable[index].getNodes();
+        for (Node<K, V> node : nodeList) {
+            if (key.equals(node.getKey())) {
+                nodeList.remove(node);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void removeAll() {
+        Node<K, V>[] tab;
+        if ((tab = hashTable) != null && size > 0) {
+            size = 0;
+            for (int i = 0; i < tab.length; i++) {
+                tab[i] = null;
+            }
+        }
+    }
+
+    @Override
+    public Object get(Object key) {
+        int index = hash((K) key);
+        if (index < hashTable.length && hashTable[index] != null) {
+            if (hashTable[index].getNodes().size() == 1) {
+                return hashTable[index].getNodes().get(0).getValue();
+            }
+            List<Node<K, V>> list = hashTable[index].getNodes();
+            for (Node<K, V> node : list) {
+                if (key.equals(node.getKey())) {
+                    return node.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public int size() {
+        return size;
+    }
+
     private boolean keyExistButValueNew(final Node<K, V> nodeFromList, final Node<K, V> newNode, final Object value) {
         if (newNode.getKey().equals(nodeFromList.getKey()) && !newNode.getValue().equals(nodeFromList.getValue())) {
             nodeFromList.setValue((V) value);
@@ -70,8 +123,6 @@ public class CustomHashMap<K, V> implements CustomMap {
                 }
             }
         }
-
-
     }
 
     private boolean addNode(int index, Node<K, V> newNode) {
@@ -80,46 +131,6 @@ public class CustomHashMap<K, V> implements CustomMap {
         this.size++;
         return true;
 
-    }
-
-    @Override
-    public boolean remove(final Object key) {
-        int index = hash((K) key);
-        if (hashTable[index] == null) return false;
-        if (hashTable[index].getNodes().size() == 1) {
-            hashTable[index] = null;
-            return true;
-        }
-        List<Node<K, V>> nodeList = hashTable[index].getNodes();
-        for (Node<K, V> node : nodeList) {
-            if (key.equals(node.getKey())) {
-                nodeList.remove(node);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public Object get(Object key) {
-        int index = hash((K) key);
-        if (index < hashTable.length && hashTable[index] != null) {
-            if (hashTable[index].getNodes().size() == 1) {
-                return hashTable[index].getNodes().get(0).getValue();
-            }
-            List<Node<K, V>> list = hashTable[index].getNodes();
-            for (Node<K, V> node : list) {
-                if (key.equals(node.getKey())) {
-                    return node.getValue();
-                }
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public int size() {
-        return size;
     }
 
     private int hash(final K value) {

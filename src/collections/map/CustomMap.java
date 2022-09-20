@@ -6,6 +6,8 @@ public interface CustomMap<K, V> {
 
     boolean remove(K key);
 
+    void removeAll();
+
     V get(K key);
 
     int size();
