@@ -1,11 +1,12 @@
 package collections.map;
 
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
-public class CustomHashMap<K, V>  implements CustomMap{
+public class CustomHashMap<K, V> implements CustomMap {
 
     private Node<K, V>[] hashTable;
     private int size = 0;
@@ -97,9 +98,17 @@ public class CustomHashMap<K, V>  implements CustomMap{
         return new Object[0];
     }
 
-
-
-
+    @Override
+    public Set<K> keySet() {
+        Set<K> keys = new TreeSet<>();
+        for (int i = 0; i < hashTable.length; i++) {
+            if (hashTable[i] != null) {
+                keys.add(hashTable[i].getNodes().get(0).getKey());
+                System.out.println(hashTable[i].getNodes().get(0).getKey());
+            }
+        }
+        return keys;
+    }
 
     private boolean keyExistButValueNew(final Node<K, V> nodeFromList, final Node<K, V> newNode, final Object value) {
         if (newNode.getKey().equals(nodeFromList.getKey()) && !newNode.getValue().equals(nodeFromList.getValue())) {
@@ -145,12 +154,6 @@ public class CustomHashMap<K, V>  implements CustomMap{
 
     private int hash(final K value) {
         return Math.abs(Objects.hash(value)) % hashTable.length;
-    }
-
-    @Override
-    public int compareTo(Object o) {
-
-        return 0;
     }
 
 
