@@ -1,10 +1,11 @@
 package collections.map;
 
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-public class CustomHashMap<K, V> implements CustomMap {
+public class CustomHashMap<K, V>  implements CustomMap{
 
     private Node<K, V>[] hashTable;
     private int size = 0;
@@ -91,6 +92,15 @@ public class CustomHashMap<K, V> implements CustomMap {
         return size;
     }
 
+    @Override
+    public Object[] getSortedArray() {
+        return new Object[0];
+    }
+
+
+
+
+
     private boolean keyExistButValueNew(final Node<K, V> nodeFromList, final Node<K, V> newNode, final Object value) {
         if (newNode.getKey().equals(nodeFromList.getKey()) && !newNode.getValue().equals(nodeFromList.getValue())) {
             nodeFromList.setValue((V) value);
@@ -136,6 +146,13 @@ public class CustomHashMap<K, V> implements CustomMap {
     private int hash(final K value) {
         return Math.abs(Objects.hash(value)) % hashTable.length;
     }
+
+    @Override
+    public int compareTo(Object o) {
+
+        return 0;
+    }
+
 
     private class Node<K, V> {
         private List<Node<K, V>> nodes;

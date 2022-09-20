@@ -1,6 +1,8 @@
 package collections.map;
 
-public interface CustomMap<K, V> {
+import java.util.Comparator;
+
+public interface CustomMap<K, V> extends Comparable<K> {
 
     boolean put(final K key, final V value);
 
@@ -12,4 +14,5 @@ public interface CustomMap<K, V> {
 
     int size();
 
+    K[] getSortedArray();
 }

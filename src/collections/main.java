@@ -6,6 +6,7 @@ import dto.Student;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class main {
 
@@ -14,10 +15,13 @@ public class main {
         map.put(1, new Student(1, "Raz", "Dva"));
         map.put(2, new Student(2, "Raz", "Dva"));
         map.put(3, new Student(2, "Raz1", "Dva1"));
+
         System.out.println(map.get(1));
         System.out.println(map.remove(2));
         System.out.println(map.size());
         map.removeAll();
+
+
 
     }
 }
