@@ -1,10 +1,9 @@
 package collections.map;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Хэш таблица основанная на интерфейсе CustomMap.
@@ -13,7 +12,7 @@ import java.util.TreeSet;
  * @param <K> - ключ, ассоциированное значение которого должно быть возвращено
  * @param <V> - значение, которому сопоставлен указанный ключ
  */
-public class CustomHashMap<K, V> implements CustomMap {
+public class CustomHashMap<K extends Comparable<K>, V> implements CustomMap {
 
     private Node<K, V>[] hashTable;
     private int size = 0;
@@ -122,21 +121,23 @@ public class CustomHashMap<K, V> implements CustomMap {
      * @return множество Set с отсортированным содержимым
      */
     @Override
-    public Set<K> keySet() {
-        Set<K> keys = new TreeSet<>();
+    public List<K> keys() {
+        List<K> arr = new ArrayList<>(size);
         for (int i = 0; i < hashTable.length; i++) {
             if (hashTable[i] != null) {
                 if (hashTable[i].getNodes().size() == 1) {
-                    keys.add(hashTable[i].getNodes().get(0).getKey());
+                    arr.add(hashTable[i].getNodes().get(0).getKey());
                 } else {
                     List<Node<K, V>> list = hashTable[i].getNodes();
                     for (Node<K, V> node : list) {
-                        keys.add(node.getKey());
+                        arr.add(node.getKey());
                     }
                 }
             }
         }
-        return keys;
+        bubble(arr);
+        return arr;
+
     }
 
     /**
@@ -163,6 +164,39 @@ public class CustomHashMap<K, V> implements CustomMap {
         this.size++;
         return true;
 
+    }
+
+
+    /**
+     * Реализация сортировки пузырьком
+     *
+     * @param keys
+     */
+    private void bubble(List<K> keys) {
+        boolean isSorted = false;
+        K temp;
+        while (!isSorted) {
+            isSorted = true;
+            for (int i = 0; i < keys.size() - 1; i++) {
+                if (compareTwoValues(keys.get(i), keys.get(i + 1))) {
+                    temp = keys.get(i + 1);
+                    keys.set(i + 1, keys.get(i));
+                    keys.set(i, temp);
+                    isSorted = false;
+                }
+            }
+        }
+    }
+
+    /**
+     * Сравнение ключей
+     *
+     * @param value1
+     * @param value2
+     * @return возвращает true - если первое значение больше второго
+     */
+    private boolean compareTwoValues(K value1, K value2) {
+        return value1.compareTo(value2) > 0;
     }
 
     /**
