@@ -6,6 +6,13 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * Хэш таблица основанная на интерфейсе CustomMap.
+ * Эта реализация имеет базовые методы.
+ *
+ * @param <K> - ключ, ассоциированное значение которого должно быть возвращено
+ * @param <V> - значение, которому сопоставлен указанный ключ
+ */
 public class CustomHashMap<K, V> implements CustomMap {
 
     private Node<K, V>[] hashTable;
@@ -17,7 +24,14 @@ public class CustomHashMap<K, V> implements CustomMap {
         threshold = hashTable.length * 0.75f;
     }
 
-
+    /**
+     * Связывает указанное значение с указанным ключём в MAP-е.
+     * Если MAP-а ранее содержала сопоставление для ключа, старое значение заменяется указанным значением.
+     *
+     * @param key   Параметр ключа
+     * @param value Значение, которое будет связано с указанным ключом
+     * @return
+     */
     @Override
     public boolean put(final Object key, final Object value) {
         if (size + 1 >= threshold) {
@@ -40,7 +54,12 @@ public class CustomHashMap<K, V> implements CustomMap {
         return false;
     }
 
-
+    /**
+     * Удаление записи по ключу в MAP-е
+     *
+     * @param key Параметр ключа
+     * @return возвращает результат выполненной операции. True - при успешном выполнении, False - при отрицательном
+     */
     @Override
     public boolean remove(final Object key) {
         int index = hash((K) key);
@@ -60,6 +79,9 @@ public class CustomHashMap<K, V> implements CustomMap {
         return false;
     }
 
+    /**
+     * Удаление всех сопоставленных данных по ключу\значению
+     */
     @Override
     public void removeAll() {
         Node<K, V>[] tab;
@@ -71,6 +93,12 @@ public class CustomHashMap<K, V> implements CustomMap {
         }
     }
 
+    /**
+     * Возвращает значение MAP-ы по ключу
+     *
+     * @param key, параметр ключа.
+     * @return value, значение
+     */
     @Override
     public Object get(Object key) {
         int index = hash((K) key);
@@ -88,23 +116,63 @@ public class CustomHashMap<K, V> implements CustomMap {
         return null;
     }
 
-    @Override
-    public int size() {
-        return size;
-    }
-
+    /**
+     * Метод, возвращающий множество ключей в остортированном виде MAP-ы
+     *
+     * @return множество Set с отсортированным содержимым
+     */
     @Override
     public Set<K> keySet() {
         Set<K> keys = new TreeSet<>();
         for (int i = 0; i < hashTable.length; i++) {
             if (hashTable[i] != null) {
-                keys.add(hashTable[i].getNodes().get(0).getKey());
-                System.out.println(hashTable[i].getNodes().get(0).getKey());
+                if (hashTable[i].getNodes().size() == 1) {
+                    keys.add(hashTable[i].getNodes().get(0).getKey());
+                } else {
+                    List<Node<K, V>> list = hashTable[i].getNodes();
+                    for (Node<K, V> node : list) {
+                        keys.add(node.getKey());
+                    }
+                }
             }
         }
         return keys;
     }
 
+    /**
+     * Метод, который возвращает колличество сопоставлений ключ-значение
+     *
+     * @return колличество сопоставлений ключ-значение
+     */
+    @Override
+    public int size() {
+        return size;
+    }
+
+    /**
+     * Приватный метод, реализует добавление новой ноды в хэш-таблицу.
+     *
+     * @param index   индекс, который присваивается ноде. Высчитывается путём деления присвоенного
+     *                хэш-кода на длину массива хэш таблицы
+     * @param newNode новая нода, которая добавляется в хэш-таблицу
+     * @return возвращет true при успешном выполнении.
+     */
+    private boolean addNode(int index, Node<K, V> newNode) {
+        hashTable[index] = new Node<>(null, null);
+        hashTable[index].getNodes().add(newNode);
+        this.size++;
+        return true;
+
+    }
+
+    /**
+     * Приватный метод, который перезаписывает значение, если таковой имеется в хеш-таблице.
+     *
+     * @param nodeFromList Нода которая берётся для сравнения из хэш-таблицы
+     * @param newNode      новая нода с которой сравнивается
+     * @param value        значение, которое заменяется, если ноды одинаковые
+     * @return true - при успешном выполнении, false - при отсутствии дубликата.
+     */
     private boolean keyExistButValueNew(final Node<K, V> nodeFromList, final Node<K, V> newNode, final Object value) {
         if (newNode.getKey().equals(nodeFromList.getKey()) && !newNode.getValue().equals(nodeFromList.getValue())) {
             nodeFromList.setValue((V) value);
@@ -113,6 +181,15 @@ public class CustomHashMap<K, V> implements CustomMap {
         return false;
     }
 
+    /**
+     * приватный метод, служит для проверки коллизий и если таковые имеются - добавляет в связянный списко
+     * того же бакета.
+     *
+     * @param nodeFromList Нода которая берётся для сравнения
+     * @param newNode      новая нода с которой сравнивается
+     * @param nodes        связанный список
+     * @return true - если коллизии выявились, false - коллизии отсутсвуют
+     */
     private boolean collisionProcessing(final Node<K, V> nodeFromList,
                                         final Node<K, V> newNode,
                                         final List<Node<K, V>> nodes) {
@@ -126,6 +203,9 @@ public class CustomHashMap<K, V> implements CustomMap {
         return false;
     }
 
+    /**
+     * приватный метод, который расширяет хэш-таблицу в случае её заполнения
+     */
     private void arrayDoubling() {
         Node<K, V>[] oldHashTable = hashTable;
         hashTable = new Node[oldHashTable.length * 2];
@@ -139,19 +219,19 @@ public class CustomHashMap<K, V> implements CustomMap {
         }
     }
 
-    private boolean addNode(int index, Node<K, V> newNode) {
-        hashTable[index] = new Node<>(null, null);
-        hashTable[index].getNodes().add(newNode);
-        this.size++;
-        return true;
-
-    }
-
     private int hash(final K value) {
         return Math.abs(Objects.hash(value)) % hashTable.length;
     }
 
-
+    /**
+     * Узел. Содержит внутри себя связанный список узлов в пределах одного бакета(корзины) и в случае коллизии
+     * добавляется в связанный список.
+     * Нода первого уровня - является заглушкой
+     * Узлы содержат хэш, ключ и значение.
+     *
+     * @param <K> key, параметр ключа.
+     * @param <V> value, значение.
+     */
     private class Node<K, V> {
         private List<Node<K, V>> nodes;
         private int hash;
